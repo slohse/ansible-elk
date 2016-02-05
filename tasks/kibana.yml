@@ -4,7 +4,7 @@
     dest=/opt
     url=https://download.elastic.co/kibana/kibana/kibana-{{ elk_kibana.version }}.tar.gz
     owner={{ elk_nginx.user }} group={{ elk_nginx.user }}
-  sudo: yes
+  become: yes
   register: new_archive_downloaded
 
 - name: Kibana archive uncompressed
@@ -12,7 +12,7 @@
     src=/opt/kibana-{{ elk_kibana.version }}.tar.gz
     dest=/opt copy=no
     owner={{ elk_nginx.user }} group={{ elk_nginx.user }}
-  sudo: yes
+  become: yes
   when: new_archive_downloaded|changed
 
 - name: Uncompressed Kibana linked to path
@@ -20,7 +20,7 @@
     src=/opt/kibana-{{ elk_kibana.version }}
     path={{ elk_kibana.path }} state=link
     owner={{ elk_nginx.user }} group={{ elk_nginx.user }}
-  sudo: yes
+  become: yes
 
 - name: Kibana files ownership
   file:
@@ -28,14 +28,14 @@
     state=directory
     owner={{ elk_nginx.user }} group={{ elk_nginx.user }} recurse=yes
   changed_when: False
-  sudo: yes
+  become: yes
 
 - name: Supervisor config file
   template:
     src=kibana-supervisor.j2
     dest=/etc/supervisor/conf.d/kibana.conf
     owner=root group=root mode=644
-  sudo: yes
+  become: yes
   notify: Restart supervisor
 
 - name: Generate kibana htpassword
@@ -44,7 +44,7 @@
   args:
     chdir: /etc/nginx/conf.d
     creates: /etc/nginx/conf.d/.kibana.htpasswd
-  sudo: yes
+  become: yes
   register: http_pass_gen
   when: elk_kibana.user is defined and elk_kibana.password is defined
 
@@ -52,7 +52,7 @@
   file:
     path=/etc/nginx/conf.d/.kibana.htpasswd
     owner={{ elk_nginx.user }} group=root mode=400
-  sudo: yes
+  become: yes
   when: http_pass_gen|changed
     
 - name: Nginx config file
@@ -60,5 +60,5 @@
     src=kibana-default.j2
     dest=/etc/nginx/conf.d/kibana.conf
     owner=root group=root mode=644
-  sudo: yes
+  become: yes
   notify: Restart nginx

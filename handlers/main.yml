@@ -3,34 +3,34 @@
   service:
     name=monit
     enabled=yes state=restarted
-  sudo: yes
+  become: yes
 
 - name: Restart elasticsearch
   monit:
     name=elasticsearch
     state=restarted
-  sudo: yes
+  become: yes
 
 - name: Restart logstash
   monit:
     name=logstash
     state=restarted
-  sudo: yes
+  become: yes
 
 - name: Restart nginx
   monit:
     name=nginx
     state=restarted
-  sudo: yes
+  become: yes
 
 - name: Restart supervisor
   service:
     name=supervisor
     enabled=yes state=restarted
-  sudo: yes
+  become: yes
 
 - name: Restart kibana
   supervisorctl:
     name=kibana
     state=restarted
-  sudo: yes
+  become: yes
