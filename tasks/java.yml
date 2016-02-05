@@ -1,26 +1,6 @@
 ---
-- name: WebUpd8 apt repo
-  apt_repository:
-    repo='ppa:webupd8team/java'
-    update_cache=yes
-  when: elk_java.flavor == 'oracle' and ansible_distribution == 'Ubuntu'
-  become: yes
-
-- name: Check Oracle license
-  shell:
-    /usr/bin/debconf-show oracle-java7-installer |awk '/accepted-oracle-license/{print $NF}'
-  become: yes
-  changed_when: False
-  when: elk_java.flavor == 'oracle' and ansible_distribution == 'Ubuntu'
-  register: webupd8team
-
-- name: Accept Oracle license
-  shell:
-    echo 'oracle-java7-installer shared/accepted-oracle-license-v1-1 select true' | /usr/bin/debconf-set-selections
-  become: yes
-  when: elk_java.flavor == 'oracle' and ansible_distribution == 'Ubuntu' and webupd8team.stdout != 'true'
-
 - name: Java apt packages
   apt: pkg={{ item }} update_cache=yes state=present
-  with_items: elk_java.{{ elk_java.flavor }}
+  with_items:
+      - "{{ elk_java.openjdk }}"
   become: yes

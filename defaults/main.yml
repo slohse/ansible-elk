@@ -1,11 +1,7 @@
 ---
 elk_java:
-  flavor: openjdk
-  oracle:
-    - oracle-java7-installer
-    - oracle-java7-set-default
   openjdk:
-    - openjdk-7-jre-headless
+    - openjdk-8-jre-headless
 
 elk_elasticsearch:
   version: 1.4
