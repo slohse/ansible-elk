@@ -1,64 +1,75 @@
 ---
 - name: Kibana archive available
-  get_url:
+  become: yes
+  get_url: >
     dest=/opt
     url=https://download.elastic.co/kibana/kibana/kibana-{{ elk_kibana.version }}.tar.gz
     owner={{ elk_nginx.user }} group={{ elk_nginx.user }}
-  become: yes
   register: new_archive_downloaded
 
 - name: Kibana archive uncompressed
-  unarchive:
-    src=/opt/kibana-{{ elk_kibana.version }}.tar.gz
-    dest=/opt copy=no
-    owner={{ elk_nginx.user }} group={{ elk_nginx.user }}
   become: yes
+  unarchive: >
+    src=/opt/kibana-{{ elk_kibana.version }}.tar.gz
+    dest=/opt
+    copy=no
+    owner={{ elk_nginx.user }}
+    group={{ elk_nginx.user }}
   when: new_archive_downloaded|changed
 
 - name: Uncompressed Kibana linked to path
-  file:
-    src=/opt/kibana-{{ elk_kibana.version }}
-    path={{ elk_kibana.path }} state=link
-    owner={{ elk_nginx.user }} group={{ elk_nginx.user }}
   become: yes
+  file: >
+    src=/opt/kibana-{{ elk_kibana.version }}
+    state=link
+    path={{ elk_kibana.path }}
+    owner={{ elk_nginx.user }}
+    group={{ elk_nginx.user }}
 
 - name: Kibana files ownership
-  file:
+  file: >
     path=/opt/kibana-{{ elk_kibana.version }}
+    recurse=yes
     state=directory
-    owner={{ elk_nginx.user }} group={{ elk_nginx.user }} recurse=yes
+    owner={{ elk_nginx.user }}
+    group={{ elk_nginx.user }}
   changed_when: False
   become: yes
 
 - name: Supervisor config file
-  template:
+  template: >
     src=kibana-supervisor.j2
     dest=/etc/supervisor/conf.d/kibana.conf
-    owner=root group=root mode=644
+    owner=root
+    group=root
+    mode=644
   become: yes
   notify: Restart supervisor
 
 - name: Generate kibana htpassword
-  shell:
-    echo "{{ elk_kibana.user }}:$(openssl passwd -crypt {{ elk_kibana.password }}):kibana" |tee .kibana.htpasswd
+  become: yes
+  shell: echo "{{ elk_kibana.user }}:$(openssl passwd -crypt {{ elk_kibana.password }}):kibana" | tee .kibana.htpasswd
   args:
     chdir: /etc/nginx/conf.d
     creates: /etc/nginx/conf.d/.kibana.htpasswd
-  become: yes
   register: http_pass_gen
   when: elk_kibana.user is defined and elk_kibana.password is defined
 
 - name: Kibana htpassword file permissions
-  file:
-    path=/etc/nginx/conf.d/.kibana.htpasswd
-    owner={{ elk_nginx.user }} group=root mode=400
   become: yes
+  file: >
+    path=/etc/nginx/conf.d/.kibana.htpasswd
+    owner={{ elk_nginx.user }}
+    group=root
+    mode=400
   when: http_pass_gen|changed
-    
+
 - name: Nginx config file
-  template:
+  become: yes
+  template: >
     src=kibana-default.j2
     dest=/etc/nginx/conf.d/kibana.conf
-    owner=root group=root mode=644
-  become: yes
+    owner=root
+    group=root
+    mode=644
   notify: Restart nginx

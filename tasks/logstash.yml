@@ -1,43 +1,47 @@
 ---
 - name: Logstash apt repo
-  apt_repository:
-    repo="deb http://packages.elastic.co/logstash/{{ elk_logstash.version }}/{{ ansible_os_family|lower }} stable main"
-    update_cache=yes
-  when: ansible_os_family == 'Debian'
   become: yes
+  apt_repository: >
+    repo="deb http://packages.elastic.co/logstash/{{ elk_logstash.version }}/debian stable main"
+    update_cache=yes
 
 - name: Install logstash apt packages
+  become: yes
   apt: pkg={{ item }} update_cache=yes state=present
   with_items:
    - logstash
    - logstash-contrib
-  become: yes
-  when: ansible_os_family == 'Debian'
   notify: Restart logstash
 
 - name: Logstash conf file
-  template:
+  become: yes
+  template: >
     src={{ item.src }}
     dest=/etc/logstash/conf.d/{{ item.dest }}
-    owner=root group=root mode=644
+    owner=root
+    group=root
+    mode=644
   with_items: elk_logstash.configs
-  become: yes
   notify: Restart logstash
 
 - name: Logstash pattern files
-  template:
+  become: yes
+  template: >
     src={{ item.src }}
     dest=/opt/logstash/patterns/{{ item.dest }}
-    owner=root group=root mode=644
+    owner=root
+    group=root
+    mode=644
   with_items: elk_logstash.patterns
-  become: yes
   when: elk_logstash.patterns is defined
   notify: Restart logstash
 
 - name: Make monit to look after Logstash
-  template:
+  become: yes
+  template: >
     src=logstash.monitrc.conf.j2
     dest=/etc/monit/conf.d/logstash.monitrc.conf
-    owner=root group=root mode=644
-  become: yes
+    owner=root
+    group=root
+    mode=644
   notify: Restart monit

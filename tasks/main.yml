@@ -1,27 +1,26 @@
 ---
-- name: Include OS-specific variables
-  include_vars: "{{ ansible_os_family }}.yml"
-
 - name: Install common apt packages
+  become: yes
   apt: pkg={{ item }} state=latest update_cache=true
   with_items: elk_common_packages
-  become: yes
 
 - name: Monit conf file
-  copy:
+  become: yes
+  copy: >
     src=monitrc
     dest=/etc/monit/monitrc
-    owner=root group=root mode=600
-  become: yes
+    owner=root
+    group=root
+    mode=600
   notify: Restart monit
 
 - name: Install Java
   include: java.yml
 
 - name: ES apt GPG key
-  apt_key: url='http://packages.elastic.co/GPG-KEY-elasticsearch'
-  when: ansible_os_family == 'Debian'
   become: yes
+  apt_key: url=http://packages.elastic.co/GPG-KEY-elasticsearch
+  when: ansible_os_family == 'Debian'
 
 - name: Install Elasticsearch
   include: elasticsearch.yml
