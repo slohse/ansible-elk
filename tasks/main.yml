@@ -4,15 +4,15 @@
   apt: pkg={{ item }} state=latest update_cache=true
   with_items: elk_common_packages
 
-- name: Monit conf file
-  become: yes
-  copy: >
-    src=monitrc
-    dest=/etc/monit/monitrc
-    owner=root
-    group=root
-    mode=600
-  notify: Restart monit
+# - name: Monit conf file
+#   become: yes
+#   copy: >
+#     src=monitrc
+#     dest=/etc/monit/monitrc
+#     owner=root
+#     group=root
+#     mode=600
+#   notify: restart monit
 
 - name: Install Java
   include: java.yml
@@ -20,7 +20,6 @@
 - name: ES apt GPG key
   become: yes
   apt_key: url=http://packages.elastic.co/GPG-KEY-elasticsearch
-  when: ansible_os_family == 'Debian'
 
 - name: Install Elasticsearch
   include: elasticsearch.yml

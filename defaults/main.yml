@@ -4,13 +4,11 @@ elk_java:
     - openjdk-7-jre-headless
 
 elk_common_packages:
-  - openntpd
   - python-apt
   - python-pycurl
   - python-pip
   - supervisor
-  - monit
-  - git-core
+  # - monit
 
 elk_elasticsearch:
   version: 2.x
@@ -25,6 +23,8 @@ elk_logstash:
   pid_file: /var/run/logstash.pid
   configs:
     - { src: logstash-simple.conf.j2, dest: simple.conf }
+  plugins:
+    - logstash-input-beats
   patterns: [] # optional; follows same format as `configs`
 
 elk_kibana:

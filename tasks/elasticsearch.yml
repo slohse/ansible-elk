@@ -11,7 +11,7 @@
     pkg=elasticsearch
     update_cache=yes
     state=latest
-  notify: Restart elasticsearch
+  notify: restart elasticsearch
 
 - name: Curator PIP package
   become: yes
@@ -25,14 +25,14 @@
     owner=root
     group=root
     mode=644
-  notify: Restart elasticsearch
+  notify: restart elasticsearch
 
-- name: Make monit to look after ES
-  template: >
-    src=elasticsearch.monitrc.conf.j2
-    dest=/etc/monit/conf.d/elasticsearch.monitrc.conf
-    owner=root
-    group=root
-    mode=644
-  become: yes
-  notify: Restart monit
+# - name: Make monit to look after ES
+#   template: >
+#     src=elasticsearch.monitrc.conf.j2
+#     dest=/etc/monit/conf.d/elasticsearch.monitrc.conf
+#     owner=root
+#     group=root
+#     mode=644
+#   become: yes
+#   notify: restart monit

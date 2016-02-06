@@ -1,36 +1,40 @@
 ---
-- name: Restart monit
-  become: yes
-  service: >
-    name=monit
-    enabled=yes state=restarted
+# - name: restart monit
+#   become: yes
+#   service: >
+#     name=monit
+#     enabled=yes state=restarted
 
-- name: Restart elasticsearch
+- name: restart elasticsearch
   become: yes
-  monit: >
-    name=elasticsearch
-    state=restarted
+  service: name=elasticsearch state=restarted
+  # monit: >
+  #   name=elasticsearch
+  #   state=restarted
 
-- name: Restart logstash
+- name: restart logstash
   become: yes
-  monit: >
-    name=logstash
-    state=restarted
+  service: name=logstash state=restarted
+  # monit: >
+  #   name=logstash
+  #   state=restarted
 
-- name: Restart nginx
-  become: yes
-  monit: >
-    name=nginx
-    state=restarted
-
-- name: Restart supervisor
-  become: yes
-  service: >
-    name=supervisor
-    enabled=yes state=restarted
-
-- name: Restart kibana
+- name: restart kibana
   become: yes
   supervisorctl: >
     name=kibana
+    state=restarted
+
+- name: restart nginx
+  become: yes
+  service: name=nginx state=restarted
+  # monit: >
+  #   name=nginx
+  #   state=restarted
+
+- name: restart supervisor
+  become: yes
+  service: >
+    name=supervisor
+    enabled=yes
     state=restarted

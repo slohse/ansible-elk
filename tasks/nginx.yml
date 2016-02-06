@@ -22,12 +22,12 @@
     - { path: 'default.conf' }
     - { path: 'example_ssl.conf' }
 
-- name: Make monit to look after nginx
-  become: yes
-  template: >
-    src=nginx.monitrc.conf.j2
-    dest=/etc/monit/conf.d/nginx.monitrc.conf
-    owner=root
-    group=root
-    mode=644
-  notify: Restart monit
+# - name: Make monit to look after nginx
+#   become: yes
+#   template: >
+#     src=nginx.monitrc.conf.j2
+#     dest=/etc/monit/conf.d/nginx.monitrc.conf
+#     owner=root
+#     group=root
+#     mode=644
+#   notify: restart monit

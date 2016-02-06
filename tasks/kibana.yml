@@ -4,8 +4,11 @@
   get_url: >
     dest=/opt
     url=https://download.elastic.co/kibana/kibana/kibana-{{ elk_kibana.version }}.tar.gz
-    owner={{ elk_nginx.user }} group={{ elk_nginx.user }}
+    owner={{ elk_nginx.user }}
+    group={{ elk_nginx.user }}
   register: new_archive_downloaded
+  tags:
+    - kibana
 
 - name: Kibana archive uncompressed
   become: yes
@@ -18,7 +21,6 @@
   when: new_archive_downloaded|changed # should check for the extracted folder perhaps?
   tags:
     - kibana
-    - kibana-extract
 
 - name: Uncompressed Kibana linked to path
   become: yes
@@ -28,35 +30,50 @@
     path={{ elk_kibana.path }}
     owner={{ elk_nginx.user }}
     group={{ elk_nginx.user }}
+  tags:
+    - kibana
 
 - name: Kibana files ownership
+  become: yes
+  changed_when: False
   file: >
     path=/opt/kibana-{{ elk_kibana.version }}
     recurse=yes
     state=directory
     owner={{ elk_nginx.user }}
     group={{ elk_nginx.user }}
-  changed_when: False
-  become: yes
+  tags:
+    - kibana
+
+- name: Install sense plugin for kibana
+  command: /opt/kibana/bin/kibana plugin --install elastic/sense
+  ignore_errors: yes
+  tags:
+    - kibana
+    - kibana-plugins
 
 - name: Supervisor config file
+  become: yes
   template: >
     src=kibana-supervisor.j2
     dest=/etc/supervisor/conf.d/kibana.conf
     owner=root
     group=root
     mode=644
-  become: yes
-  notify: Restart supervisor
+  notify: restart supervisor
+  tags:
+    - kibana
 
 - name: Generate kibana htpassword
   become: yes
-  shell: echo "{{ elk_kibana.user }}:$(openssl passwd -crypt {{ elk_kibana.password }}):kibana" | tee .kibana.htpasswd
+  when: elk_kibana.user is defined and elk_kibana.password is defined
+  command: echo "{{ elk_kibana.user }}:$(openssl passwd -crypt {{ elk_kibana.password }}):kibana" | tee .kibana.htpasswd
   args:
     chdir: /etc/nginx/conf.d
     creates: /etc/nginx/conf.d/.kibana.htpasswd
   register: http_pass_gen
-  when: elk_kibana.user is defined and elk_kibana.password is defined
+  tags:
+    - kibana
 
 - name: Kibana htpassword file permissions
   become: yes
@@ -66,6 +83,8 @@
     group=root
     mode=400
   when: http_pass_gen|changed
+  tags:
+    - kibana
 
 - name: Nginx config file
   become: yes
@@ -75,4 +94,6 @@
     owner=root
     group=root
     mode=644
-  notify: Restart nginx
+  notify: restart nginx
+  tags:
+    - kibana

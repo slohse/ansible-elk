@@ -1,5 +1,27 @@
-input { stdin { } }
+input {
+  stdin { }
+  beats {
+    port => 5044
+  }
+}
+
+filter {
+  if [type] == "apache-access" {
+    grok {
+      match => { "message" => "%{COMBINEDAPACHELOG}" }
+    }
+    date {
+      match => [ "timestamp" , "dd/MMM/yyyy:HH:mm:ss Z" ]
+    }
+  }
+}
+
 output {
-  elasticsearch { host => localhost }
+  elasticsearch {
+    hosts => ["localhost:9200"]
+    manage_template => false
+    index => "%{[@metadata][beat]}-%{+YYYY.MM.dd}"
+    document_type => "%{[@metadata][type]}"
+  }
   stdout { codec => rubydebug }
 }
