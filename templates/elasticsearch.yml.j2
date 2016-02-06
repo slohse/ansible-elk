@@ -15,3 +15,11 @@ script.groovy.sandbox.enabled: true
 {% if elk_elasticsearch.http.port is defined %}
 http.port: {{ elk_elasticsearch.http.port }}
 {% endif %}
+
+{% if elk_elasticsearch.bind_host is defined %}
+network.bind_host: {{ elk_elasticsearch.bind_host }}
+{% endif %}
+
+{% if elk_elasticsearch.host is defined %}
+network.host: {{ elk_elasticsearch.host }}
+{% endif %}

@@ -7,10 +7,12 @@
 
 - name: Install logstash apt packages
   become: yes
-  apt: pkg={{ item }} update_cache=yes state=present
+  apt: >
+    pkg={{ item }}
+    update_cache=yes
+    state=present
   with_items:
    - logstash
-   - logstash-contrib
   notify: Restart logstash
 
 - name: Logstash conf file

@@ -15,7 +15,10 @@
     copy=no
     owner={{ elk_nginx.user }}
     group={{ elk_nginx.user }}
-  when: new_archive_downloaded|changed
+  when: new_archive_downloaded|changed # should check for the extracted folder perhaps?
+  tags:
+    - kibana
+    - kibana-extract
 
 - name: Uncompressed Kibana linked to path
   become: yes
