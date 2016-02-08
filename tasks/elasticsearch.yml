@@ -27,6 +27,19 @@
     mode=644
   notify: restart elasticsearch
 
+# - name: Supervisor elasticsearch config file
+#   become: yes
+#   template: >
+#     src=elasticsearch-supervisor.j2
+#     dest=/etc/supervisor/conf.d/elasticsearch.conf
+#     owner=root
+#     group=root
+#     mode=644
+#   notify: restart supervisor
+#   tags:
+#     - elasticsearch
+#     - supervisor-config
+
 # - name: Make monit to look after ES
 #   template: >
 #     src=elasticsearch.monitrc.conf.j2

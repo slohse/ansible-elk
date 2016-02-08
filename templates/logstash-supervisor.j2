@@ -1,0 +1,6 @@
+[program:logstash]
+command=/usr/sbin/service logstash start
+autorestart=false
+stdout_logfile=/var/log/supervisor/logstash-stdout.log
+stderr_logfile=/var/log/supervisor/logstash-stderr.log
+startsecs=5

@@ -16,11 +16,14 @@ filter {
   }
   if [type] == "apache-error" {
     grok {
-      match => { "message" => "%{COMBINEDAPACHELOG}" }
+      match => { "message" => "%{HTTPD_ERRORLOG}" }
     }
     date {
-      match => [ "timestamp" , "dd/MMM/yyyy:HH:mm:ss Z" ]
+      match => [ "timestamp" , "EEE MMM dd HH:mm:ss yyyy" ]
     }
+  }
+  geoip {
+    source => "clientip"
   }
 }
 
@@ -29,5 +32,5 @@ output {
     hosts => ["localhost:9200"]
     document_type => "%{[@metadata][type]}"
   }
-  stdout { codec => rubydebug }
+  stdout { codec => json }
 }

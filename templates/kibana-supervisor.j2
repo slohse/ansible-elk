@@ -3,5 +3,5 @@ command={{ elk_kibana.path }}/bin/kibana
 autostart=true
 autorestart=true
 user={{ elk_nginx.user }}
-stdout_logfile=/var/log/supervisor/kibana.log
-stderr_logfile=/var/log/supervisor/error.log
+stdout_logfile=/var/log/supervisor/kibana-stdout.log
+stderr_logfile=/var/log/supervisor/kibana-stderr.log

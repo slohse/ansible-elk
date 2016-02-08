@@ -1,0 +1,6 @@
+[program:elasticsearch]
+command=sudo service elasticsearch start
+autorestart=true
+stdout_logfile=/var/log/supervisor/elasticsearch-stdout.log
+stderr_logfile=/var/log/supervisor/elasticsearch-stderr.log
+startsecs=5

@@ -22,7 +22,7 @@ elk_logstash:
   version: 2.2
   pid_file: /var/run/logstash.pid
   configs:
-    - { src: logstash-simple.conf.j2, dest: simple.conf }
+    - { src: logstash.conf.j2, dest: simple.conf }
   plugins:
     - logstash-input-beats
   patterns: [] # optional; follows same format as `configs`

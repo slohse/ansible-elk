@@ -52,7 +52,7 @@
     - kibana
     - kibana-plugins
 
-- name: Supervisor config file
+- name: Supervisor kibana config file
   become: yes
   template: >
     src=kibana-supervisor.j2
@@ -63,6 +63,7 @@
   notify: restart supervisor
   tags:
     - kibana
+    - supervisor-config
 
 - name: Generate kibana htpassword
   become: yes

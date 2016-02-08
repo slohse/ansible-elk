@@ -30,7 +30,7 @@
 
 - name: Logstash pattern files
   become: yes
-  template: >
+  copy: >
     src={{ item.src }}
     dest=/opt/logstash/patterns/{{ item.dest }}
     owner=root
@@ -46,6 +46,8 @@
   shell: /opt/logstash/bin/plugin list
   register: logstash_plugins_installed
   always_run: true  #allows checks and diffs to pass
+  tags:
+    - logstash
 
 - name: Install logstash plugins
   become: yes
@@ -68,6 +70,19 @@
   tags:
     - logstash
     - logstash-plugins
+
+# - name: Supervisor logstash config file
+#   become: yes
+#   template: >
+#     src=logstash-supervisor.j2
+#     dest=/etc/supervisor/conf.d/logstash.conf
+#     owner=root
+#     group=root
+#     mode=644
+#   notify: restart supervisor
+#   tags:
+#     - logstash
+#     - supervisor-config
 
 # - name: Make monit to look after Logstash
 #   become: yes
