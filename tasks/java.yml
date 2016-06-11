@@ -1,6 +1,8 @@
 ---
 - name: Java apt packages
   become: yes
-  apt: pkg={{ item }} update_cache=yes state=present
+  apt:
+    pkg: "{{ item }}"
+    state: latest
   with_items:
       - "{{ elk_java.openjdk }}"

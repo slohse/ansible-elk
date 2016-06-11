@@ -10,7 +10,6 @@
   apt:
     name: logstash
     state: latest
-    update_cache: yes
   notify: restart logstash
 
 - name: Logstash conf file
