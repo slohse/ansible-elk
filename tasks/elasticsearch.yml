@@ -1,16 +1,16 @@
 ---
 - name: ES apt repo
   become: yes
-  apt_repository: >
-    repo="deb http://packages.elastic.co/elasticsearch/{{ elk_elasticsearch.version }}/debian stable main"
-    update_cache=yes
+  apt_repository:
+    repo: "deb http://packages.elastic.co/elasticsearch/{{ elk_elasticsearch.version }}/debian stable main"
+    update_cache: yes
 
 - name: Install ES apt packages
   become: yes
-  apt: >
-    pkg=elasticsearch
-    update_cache=yes
-    state=latest
+  apt:
+    pkg: elasticsearch
+    update_cache: yes
+    state: latest
   notify: restart elasticsearch
 
 - name: Curator PIP package
@@ -19,33 +19,30 @@
 
 - name: ES config file
   become: yes
-  template: >
-    src=elasticsearch.yml.j2
-    dest=/etc/elasticsearch/elasticsearch.yml
-    owner=root
-    group=root
-    mode=644
+  template:
+    src: elasticsearch.yml.j2
+    dest: /etc/elasticsearch/elasticsearch.yml
+    owner: root
+    group: root
+    mode: 644
   notify: restart elasticsearch
 
 # - name: Supervisor elasticsearch config file
 #   become: yes
-#   template: >
-#     src=elasticsearch-supervisor.j2
-#     dest=/etc/supervisor/conf.d/elasticsearch.conf
-#     owner=root
-#     group=root
-#     mode=644
+#   template:
+#     src: elasticsearch-supervisor.j2
+#     dest: /etc/supervisor/conf.d/elasticsearch.conf
+#     owner: root
+#     group: root
+#     mode: 644
 #   notify: restart supervisor
-#   tags:
-#     - elasticsearch
-#     - supervisor-config
 
 # - name: Make monit to look after ES
-#   template: >
-#     src=elasticsearch.monitrc.conf.j2
-#     dest=/etc/monit/conf.d/elasticsearch.monitrc.conf
-#     owner=root
-#     group=root
-#     mode=644
+#   template:
+#     src: elasticsearch.monitrc.conf.j2
+#     dest: /etc/monit/conf.d/elasticsearch.monitrc.conf
+#     owner: root
+#     group: root
+#     mode: 644
 #   become: yes
 #   notify: restart monit

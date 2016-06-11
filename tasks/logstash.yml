@@ -1,53 +1,45 @@
 ---
 - name: Logstash apt repo
   become: yes
-  apt_repository: >
-    repo="deb http://packages.elastic.co/logstash/{{ elk_logstash.version }}/debian stable main"
-    update_cache=yes
-  tags:
-    - logstash
+  apt_repository:
+    repo: "deb http://packages.elastic.co/logstash/{{ elk_logstash.version }}/debian stable main"
+    update_cache: yes
 
 - name: Install logstash apt packages
   become: yes
-  apt: pkg=logstash update_cache=yes state=present
+  apt:
+    pkg: logstash
+    update_cache: yes
+    state: present
   notify: restart logstash
-  tags:
-    - logstash
 
 - name: Logstash conf file
   become: yes
-  template: >
-    src={{ item.src }}
-    dest=/etc/logstash/conf.d/{{ item.dest }}
-    owner=root
-    group=root
-    mode=644
+  template:
+    src: "{{ item.src }}"
+    dest: /etc/logstash/conf.d/{{ item.dest }}
+    owner: root
+    group: root
+    mode: 644
   with_items: elk_logstash.configs
   notify: restart logstash
-  tags:
-    - logstash
-    - logstash-config
 
 - name: Logstash pattern files
   become: yes
-  copy: >
-    src={{ item.src }}
-    dest=/opt/logstash/patterns/{{ item.dest }}
-    owner=root
-    group=root
-    mode=644
+  copy:
+    src: "{{ item.src }}"
+    dest: /opt/logstash/patterns/{{ item.dest }}
+    owner: root
+    group: root
+    mode: 644
   with_items: elk_logstash.patterns
   when: elk_logstash.patterns is defined
   notify: restart logstash
-  tags:
-    - logstash
 
 - name: plugins | collecting installed plugins
   shell: /opt/logstash/bin/plugin list
   register: logstash_plugins_installed
   always_run: true  #allows checks and diffs to pass
-  tags:
-    - logstash
 
 - name: Install logstash plugins
   become: yes
@@ -57,9 +49,6 @@
   args:
     chdir: /opt/logstash
   notify: restart logstash
-  tags:
-    - logstash
-    - logstash-plugins
 
 - name: Update logstash beats plugin
   become: yes
@@ -67,31 +56,23 @@
   args:
     chdir: /opt/logstash
   notify: restart logstash
-  tags:
-    - logstash
-    - logstash-plugins
 
 # - name: Supervisor logstash config file
 #   become: yes
-#   template: >
-#     src=logstash-supervisor.j2
-#     dest=/etc/supervisor/conf.d/logstash.conf
-#     owner=root
-#     group=root
-#     mode=644
+#   template:
+#     src: logstash-supervisor.j2
+#     dest: /etc/supervisor/conf.d/logstash.conf
+#     owner: root
+#     group: root
+#     mode: 644
 #   notify: restart supervisor
-#   tags:
-#     - logstash
-#     - supervisor-config
 
 # - name: Make monit to look after Logstash
 #   become: yes
 #   template: >
-#     src=logstash.monitrc.conf.j2
-#     dest=/etc/monit/conf.d/logstash.monitrc.conf
-#     owner=root
-#     group=root
-#     mode=644
+#     src: logstash.monitrc.conf.j2
+#     dest: /etc/monit/conf.d/logstash.monitrc.conf
+#     owner: root
+#     group: root
+#     mode: 644
 #   notify: restart monit
-#   tags:
-#     - logstash

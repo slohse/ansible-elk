@@ -1,69 +1,55 @@
 ---
 - name: Kibana archive available
   become: yes
-  get_url: >
-    dest=/opt
-    url=https://download.elastic.co/kibana/kibana/kibana-{{ elk_kibana.version }}.tar.gz
-    owner={{ elk_nginx.user }}
-    group={{ elk_nginx.user }}
+  get_url:
+    dest: /opt
+    url: https://download.elastic.co/kibana/kibana/kibana-{{ elk_kibana.version }}.tar.gz
+    owner: "{{ elk_nginx.user }}"
+    group: "{{ elk_nginx.user }}"
   register: new_archive_downloaded
-  tags:
-    - kibana
 
 - name: Kibana archive uncompressed
   become: yes
-  unarchive: >
-    src=/opt/kibana-{{ elk_kibana.version }}.tar.gz
-    dest=/opt
-    copy=no
-    owner={{ elk_nginx.user }}
-    group={{ elk_nginx.user }}
+  unarchive:
+    src: /opt/kibana-{{ elk_kibana.version }}.tar.gz
+    dest: /opt
+    copy: no
+    owner: "{{ elk_nginx.user }}"
+    group: "{{ elk_nginx.user }}"
   when: new_archive_downloaded|changed # should check for the extracted folder perhaps?
-  tags:
-    - kibana
 
 - name: Uncompressed Kibana linked to path
   become: yes
-  file: >
-    src=/opt/kibana-{{ elk_kibana.version }}
-    state=link
-    path={{ elk_kibana.path }}
-    owner={{ elk_nginx.user }}
-    group={{ elk_nginx.user }}
-  tags:
-    - kibana
+  file:
+    src: /opt/kibana-{{ elk_kibana.version }}
+    state: link
+    path: "{{ elk_kibana.path }}"
+    owner: "{{ elk_nginx.user }}"
+    group: "{{ elk_nginx.user }}"
 
 - name: Kibana files ownership
   become: yes
   changed_when: False
-  file: >
-    path=/opt/kibana-{{ elk_kibana.version }}
-    recurse=yes
-    state=directory
-    owner={{ elk_nginx.user }}
-    group={{ elk_nginx.user }}
-  tags:
-    - kibana
+  file:
+    path: /opt/kibana-{{ elk_kibana.version }}
+    recurse: yes
+    state: directory
+    owner: "{{ elk_nginx.user }}"
+    group: "{{ elk_nginx.user }}"
 
 - name: Install sense plugin for kibana
   command: /opt/kibana/bin/kibana plugin --install elastic/sense
   ignore_errors: yes
-  tags:
-    - kibana
-    - kibana-plugins
 
 - name: Supervisor kibana config file
   become: yes
-  template: >
-    src=kibana-supervisor.j2
-    dest=/etc/supervisor/conf.d/kibana.conf
-    owner=root
-    group=root
-    mode=644
+  template:
+    src: kibana-supervisor.j2
+    dest: /etc/supervisor/conf.d/kibana.conf
+    owner: root
+    group: root
+    mode: 644
   notify: restart supervisor
-  tags:
-    - kibana
-    - supervisor-config
 
 - name: Generate kibana htpassword
   become: yes
@@ -73,28 +59,22 @@
     chdir: /etc/nginx/conf.d
     creates: /etc/nginx/conf.d/.kibana.htpasswd
   register: http_pass_gen
-  tags:
-    - kibana
 
 - name: Kibana htpassword file permissions
   become: yes
-  file: >
-    path=/etc/nginx/conf.d/.kibana.htpasswd
-    owner={{ elk_nginx.user }}
-    group=root
-    mode=400
+  file:
+    path: /etc/nginx/conf.d/.kibana.htpasswd
+    owner: "{{ elk_nginx.user }}"
+    group: root
+    mode: 400
   when: http_pass_gen|changed
-  tags:
-    - kibana
 
 - name: Nginx config file
   become: yes
-  template: >
-    src=kibana-default.j2
-    dest=/etc/nginx/conf.d/kibana.conf
-    owner=root
-    group=root
-    mode=644
+  template:
+    src: kibana-default.j2
+    dest: /etc/nginx/conf.d/kibana.conf
+    owner: root
+    group: root
+    mode: 644
   notify: restart nginx
-  tags:
-    - kibana
