@@ -1,23 +1,19 @@
 ---
 - name: Add nginx apt key
-  become: yes
   apt_key:
     url: "http://nginx.org/keys/nginx_signing.key"
 
 - name: Add nginx apt repo
-  become: yes
   apt_repository:
     repo: "deb http://nginx.org/packages/{{ ansible_lsb.id|lower }}/ {{ ansible_lsb.codename }} nginx"
     update_cache: yes
 
 - name: Install Nginx apt package
-  become: yes
   apt:
     name: nginx
     state: latest
 
 - name: Disable default servers
-  become: yes
   file:
     path: /etc/nginx/conf.d/{{ item.path }}
     state: absent
@@ -26,7 +22,6 @@
     - { path: 'example_ssl.conf' }
 
 # - name: Make monit to look after nginx
-#   become: yes
 #   template:
 #     src: nginx.monitrc.conf.j2
 #     dest: /etc/monit/conf.d/nginx.monitrc.conf

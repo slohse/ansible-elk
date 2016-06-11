@@ -1,6 +1,5 @@
 ---
 - name: Kibana archive available
-  become: yes
   get_url:
     dest: /opt
     url: https://download.elastic.co/kibana/kibana/kibana-{{ elk_kibana.version }}.tar.gz
@@ -9,7 +8,6 @@
   register: new_archive_downloaded
 
 - name: Kibana archive uncompressed
-  become: yes
   unarchive:
     src: /opt/kibana-{{ elk_kibana.version }}.tar.gz
     dest: /opt
@@ -19,7 +17,6 @@
   when: new_archive_downloaded|changed # should check for the extracted folder perhaps?
 
 - name: Uncompressed Kibana linked to path
-  become: yes
   file:
     src: /opt/kibana-{{ elk_kibana.version }}
     state: link
@@ -28,7 +25,6 @@
     group: "{{ elk_nginx.user }}"
 
 - name: Kibana files ownership
-  become: yes
   changed_when: False
   file:
     path: /opt/kibana-{{ elk_kibana.version }}
@@ -42,7 +38,6 @@
   ignore_errors: yes
 
 - name: Supervisor kibana config file
-  become: yes
   template:
     src: kibana-supervisor.j2
     dest: /etc/supervisor/conf.d/kibana.conf
@@ -52,7 +47,6 @@
   notify: restart supervisor
 
 - name: Generate kibana htpassword
-  become: yes
   when: elk_kibana.user is defined and elk_kibana.password is defined
   command: echo "{{ elk_kibana.user }}:$(openssl passwd -crypt {{ elk_kibana.password }}):kibana" | tee .kibana.htpasswd
   args:
@@ -61,7 +55,6 @@
   register: http_pass_gen
 
 - name: Kibana htpassword file permissions
-  become: yes
   file:
     path: /etc/nginx/conf.d/.kibana.htpasswd
     owner: "{{ elk_nginx.user }}"
@@ -70,7 +63,6 @@
   when: http_pass_gen|changed
 
 - name: Nginx config file
-  become: yes
   template:
     src: kibana-default.j2
     dest: /etc/nginx/conf.d/kibana.conf

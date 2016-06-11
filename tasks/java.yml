@@ -1,6 +1,5 @@
 ---
 - name: Java apt packages
-  become: yes
   apt:
     pkg: "{{ item }}"
     state: latest

@@ -1,23 +1,19 @@
 ---
 - name: ES apt repo
-  become: yes
   apt_repository:
     repo: "deb http://packages.elastic.co/elasticsearch/{{ elk_elasticsearch.version }}/debian stable main"
     update_cache: yes
 
 - name: Install ES apt packages
-  become: yes
   apt:
     name: elasticsearch
     state: latest
   notify: restart elasticsearch
 
 - name: Curator PIP package
-  become: yes
   pip: name=elasticsearch-curator state=latest
 
 - name: ES config file
-  become: yes
   template:
     src: elasticsearch.yml.j2
     dest: /etc/elasticsearch/elasticsearch.yml
@@ -27,7 +23,6 @@
   notify: restart elasticsearch
 
 # - name: Supervisor elasticsearch config file
-#   become: yes
 #   template:
 #     src: elasticsearch-supervisor.j2
 #     dest: /etc/supervisor/conf.d/elasticsearch.conf
@@ -43,5 +38,4 @@
 #     owner: root
 #     group: root
 #     mode: 644
-#   become: yes
 #   notify: restart monit

@@ -1,13 +1,11 @@
 ---
 - name: Install common apt packages
-  become: yes
   apt:
     name: "{{ item }}"
     state: latest
   with_items: elk_common_packages
 
 # - name: Monit conf file
-#   become: yes
 #   copy:
 #     src: monitrc
 #     dest: /etc/monit/monitrc
@@ -20,7 +18,6 @@
   include: java.yml
 
 - name: ES apt GPG key
-  become: yes
   apt_key: url=http://packages.elastic.co/GPG-KEY-elasticsearch
 
 - name: Install Elasticsearch
