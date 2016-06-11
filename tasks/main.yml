@@ -2,7 +2,7 @@
 - name: Install common apt packages
   become: yes
   apt:
-    pkg: "{{ item }}"
+    name: "{{ item }}"
     state: latest
     update_cache: true
   with_items: elk_common_packages

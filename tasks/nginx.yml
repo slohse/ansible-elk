@@ -13,8 +13,9 @@
 - name: Install Nginx apt package
   become: yes
   apt:
-    pkg: nginx
+    name: nginx
     state: latest
+    update_cache: yes
 
 - name: Disable default servers
   become: yes

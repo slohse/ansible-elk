@@ -8,9 +8,9 @@
 - name: Install logstash apt packages
   become: yes
   apt:
-    pkg: logstash
+    name: logstash
+    state: latest
     update_cache: yes
-    state: present
   notify: restart logstash
 
 - name: Logstash conf file

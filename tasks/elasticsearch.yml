@@ -8,9 +8,9 @@
 - name: Install ES apt packages
   become: yes
   apt:
-    pkg: elasticsearch
-    update_cache: yes
+    name: elasticsearch
     state: latest
+    update_cache: yes
   notify: restart elasticsearch
 
 - name: Curator PIP package
