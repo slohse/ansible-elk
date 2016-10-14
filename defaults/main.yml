@@ -19,7 +19,7 @@ elk_elasticsearch:
   bind_host: 0
 
 elk_logstash:
-  version: 2.2
+  version: 2.4
   pid_file: /var/run/logstash.pid
   configs:
     - { src: logstash.conf.j2, dest: simple.conf }
