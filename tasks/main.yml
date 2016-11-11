@@ -29,5 +29,8 @@
 - name: Install Nginx
   include: nginx.yml
 
+# elasticsearch needs to be running before kibana plugin installation
+- meta: flush_handlers
+
 - name: Install Kibana
   include: kibana.yml
