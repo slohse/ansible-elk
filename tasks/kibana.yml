@@ -62,6 +62,9 @@
     mode: 400
   when: http_pass_gen|changed
 
+- name: restart kibana
+  notify: restart kibana
+
 - name: Nginx config file
   template:
     src: kibana-default.j2
