@@ -48,7 +48,7 @@
 
 - name: Generate kibana htpassword
   when: elk_kibana.user is defined and elk_kibana.password is defined
-  command: echo "{{ elk_kibana.user }}:$(openssl passwd -crypt {{ elk_kibana.password }}):kibana" | tee .kibana.htpasswd
+  shell: echo "{{ elk_kibana.user }}:$(openssl passwd -crypt {{ elk_kibana.password }}):kibana" | tee .kibana.htpasswd
   args:
     chdir: /etc/nginx/conf.d
     creates: /etc/nginx/conf.d/.kibana.htpasswd
