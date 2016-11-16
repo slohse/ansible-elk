@@ -17,6 +17,7 @@ elk_elasticsearch:
     port: 9200
   host: 0.0.0.0
   bind_host: 0
+  curator_version: 4.1.2
 
 elk_logstash:
   version: 2.4

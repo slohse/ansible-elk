@@ -11,7 +11,7 @@
   notify: restart elasticsearch
 
 - name: Curator PIP package
-  pip: name=elasticsearch-curator state=latest
+  pip: name=elasticsearch-curator version={{ elk_elasticsearch.curator_version }} state=present
 
 - name: ES config file
   template:

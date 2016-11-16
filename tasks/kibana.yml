@@ -44,7 +44,9 @@
     owner: root
     group: root
     mode: 644
-  notify: restart supervisor
+  notify:
+    - restart supervisor
+    - restart kibana
 
 - name: Generate kibana htpassword
   when: elk_kibana.user is defined and elk_kibana.password is defined
@@ -61,8 +63,6 @@
     group: root
     mode: 400
   when: http_pass_gen|changed
-
-- name: restart kibana
   notify: restart kibana
 
 - name: Nginx config file
