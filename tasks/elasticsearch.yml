@@ -13,7 +13,7 @@
   notify: Restart elasticsearch
 
 - name: Curator PIP package
-  pip: name=elasticsearch-curator state=latest
+  pip: name=elasticsearch-curator state=present version=3.5.1
   sudo: yes
 
 - name: ES config file
